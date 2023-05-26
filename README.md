@@ -9,4 +9,4 @@ go run .
 ```
 
 ## go base
-[go基础](https://github.com/canwhite/qc-gin-use)
+[go基础](https://github.com/canwhite/qc-go-use)

@@ -2,6 +2,9 @@ package main
 
 import "github.com/gin-gonic/gin"
 
+// import "gorm.io/gorm"
+// import "gorm.io/driver/mysql"
+
 func main() {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
