@@ -2,21 +2,16 @@ package main
 
 import (
 	"fmt"
-
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 func TestMysql() {
+
 	//然后将mysql植进来,配置dsn属性
 	//名称:密码@tcp(url:port)/
-	dsn := "root:715705@Qc123@tcp(127.0.0.1:3306)/test?charset=utf8&parseTime=True"
-	//然后用dsn和渠道，拿到db
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	//如果报错，
-	if err != nil {
-		panic("failed to connect database")
-	}
+	//dsn := "root:715705@Qc123@tcp(127.0.0.1:3306)/test?charset=utf8&parseTime=True"
+	// //然后用dsn和渠道，拿到db
+	//db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db := GetInstance()
 
 	//迁移schema,如果没有建表，自动创建表
 	db.AutoMigrate(&User{})
@@ -30,7 +25,7 @@ func TestMysql() {
 	// db.First(&user, 1) // 根据主键查找
 	// fmt.Println(user)
 	//注意看第一个参数，这个是赋值
-	db.First(&user, "name = ?", "linzy") // 查找 name 字段值为 linzy 的记录
+	db.First(&user, "name = ?", "zhagnsan") // 查找 name 字段值为 linzy 的记录
 	fmt.Println(user)
 
 	var users []User
@@ -57,9 +52,9 @@ func TestMysql() {
 	// ** update 更新语句
 	// Update 更新语句 - 将 User 的 age 更新为 18
 	// db.Model(&user).Update("Age", 16) //更新了第一条
-	db.Model(&user).Updates(User{Name: "linzy", Age: 88}) // 仅更新非零值字段
+	db.Model(&user).Updates(User{Name: "zhagnsan", Age: 88}) // 仅更新非零值字段
 
 	// ** delete 删除语句
-	db.Delete(&user, 1)
+	// db.Delete(&user, 1)
 
 }
