@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	// "context"
 
+	"github.com/go-redis/redis"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -15,6 +17,9 @@ type User struct {
 	Name       string
 	Age        uint
 }
+
+// 定义redis客户端
+var rdb *redis.Client
 
 func main() {
 
@@ -30,6 +35,17 @@ func main() {
 	*/
 
 	// testMysql()
+
+}
+
+func testRedis() {
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
+	//创建gin引擎
 
 }
 
