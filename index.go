@@ -29,7 +29,7 @@ func main() {
 
 	*/
 
-	testMysql()
+	// testMysql()
 
 }
 
@@ -53,13 +53,39 @@ func testMysql() {
 
 	// ** Select 查询语句
 	var user User
-	db.First(&user, 1) // 根据主键查找
-	fmt.Println(user)
+	// db.First(&user, 1) // 根据主键查找
+	// fmt.Println(user)
+	//注意看第一个参数，这个是赋值
 	db.First(&user, "name = ?", "linzy") // 查找 name 字段值为 linzy 的记录
 	fmt.Println(user)
 
+	var users []User
+	//注意看第一个参数，这个是赋值操作
+	result := db.Find(&users) // SELECT * FROM users;
+	if result.Error != nil {
+		// handle error
+		fmt.Println("selct error")
+	}
+	// for _, user := range users {
+	// 	fmt.Println(user) // print user
+	// }
+	fmt.Println(users)
+
+	/**
+	db.First(&user, 1) // 根据主键查找第一条记录1
+	db.Take(&user) // 随机获取一条记录1
+	db.Last(&user) // 根据主键查找最后一条记录1
+	db.Find(&users) // 查找所有匹配的记录1
+	db.Where(“name = ?”, “jinzhu”).First(&user) // 根据条件查找第一条记录1
+	db.Where(“name = ?”, “jinzhu”).Find(&users) // 根据条件查找所有记录1
+	*/
+
 	// ** update 更新语句
+	// Update 更新语句 - 将 User 的 age 更新为 18
+	// db.Model(&user).Update("Age", 16) //更新了第一条
+	db.Model(&user).Updates(User{Name: "linzy", Age: 88}) // 仅更新非零值字段
 
 	// ** delete 删除语句
+	db.Delete(&user, 1)
 
 }
