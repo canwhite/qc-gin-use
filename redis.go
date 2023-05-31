@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
+
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis"
+	//加上v8相当于在使用最新版本，可以用最新的api
+	"github.com/go-redis/redis/v8"
 )
 
 // 定义redis客户端
@@ -17,14 +20,17 @@ func TestRedis() {
 	//创建gin引擎
 	r := gin.Default()
 	//--简单get
-	r.GET("/ping", pingHandle)
+	r.GET("/ping", pingHandler)
 	//牛逼点的get , 假设有一个get路由 /user/:name?age=18
-	r.GET("/user/:name", getHandle)
+	r.GET("/user/:name", getHandler)
 
 	//--post
-	r.POST("/post", postHandle)
+	r.POST("/post", postHandler)
 
 	//--redis的get和set
+	r.GET("/set/:key/:value", rsetHandler)
+
+	r.GET("/get/:key", rgetHandler)
 
 	// 启动服务器
 	r.Run(":8080")
@@ -46,13 +52,13 @@ c.JSON(200, user) // 返回 {"name": "Alice", "age": 18}
 ********************************************************/
 
 // 简单点的get
-func pingHandle(c *gin.Context) {
+func pingHandler(c *gin.Context) {
 	c.String(200, "pong")
 }
 
 // 牛逼点的get
 // 假设有一个get路由 /user/:name?age=18
-func getHandle(c *gin.Context) {
+func getHandler(c *gin.Context) {
 	// 从路径中获取name参数
 	name := c.Param("name")
 	// 从查询字符串中获取age参数
@@ -67,7 +73,7 @@ func getHandle(c *gin.Context) {
 }
 
 // post操作
-func postHandle(c *gin.Context) {
+func postHandler(c *gin.Context) {
 	//从json中绑定数据到Params的结构体
 	var params Params
 	err := c.BindJSON(&params)
@@ -87,4 +93,38 @@ func postHandle(c *gin.Context) {
 
 }
 
-//然后是redis的set和get handle操作
+func rsetHandler(c *gin.Context) {
+
+	//开始吧
+	key := c.Param("key")
+	value := c.Param("value")
+
+	//然后我们来存它们
+
+	/** 参数解析
+	* context.Background(): 这是一个context.Context类型的参数，用于传递一些上下文信息，比如超时、取消、截止时间等。context.Background()是一个空的context，没有任何信息。
+		它是所有其他context的根节点
+		所以redis实际上依赖了go本身的context，用于处理请求的超时、取消等行为
+	* key: 这是一个string类型的参数，用于指定要设置的键的名称。
+	* value: 这是一个interface{}类型的参数，用于指定要设置的键的值。它可以是任何类型，go-redis会自动将其转换为字符串。
+	* 0: 这是一个time.Duration类型的参数，用于指定要设置的键的过期时间。如果为0，表示永不过期。
+	* Err(): 这是一个方法，用于返回rdb.Set操作的错误信息。如果没有错误，返回nil。
+	*/
+	err := rdb.Set(context.Background(), key, value, 0).Err()
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	c.String(200, "ok")
+}
+
+// 然后是redis的set和get handle操作
+func rgetHandler(c *gin.Context) {
+	key := c.Param("key")
+	value, err := rdb.Get(context.Background(), key).Result()
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	c.String(200, value)
+}

@@ -9,5 +9,6 @@ over
 func main() {
 
 	// TestMysql()
+	TestRedis()
 
 }
