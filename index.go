@@ -23,7 +23,10 @@ func main() {
 		}
 	}()
 
-	TestMysql()
+	//TestMysql()
 	// TestRedis()
+	//ForeignKeyTest()
+	//JoinQueryTest()
+	SubQueryAndGroupTest()
 
 }
